@@ -30,10 +30,15 @@ PHP 5.3.3
 
 安装Java环境Java应该都会装，懒得写了。。。">
 <meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_start_error.jpg">
-<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_without_ssl.jpg.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_without_ssl.jpg">
 <meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_server_config.jpg">
-<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_log.jpg">
-<meta property="og:updated_time" content="2015-11-17T06:41:19.000Z">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_https_error.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_server_protocol.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_https_error1.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/keysore_permission_reference.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_success.jpg">
+<meta property="og:updated_time" content="2015-11-17T07:24:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CAS搭建+MySQL认证+自定义加密+PHP客户端">
 <meta name="twitter:description" content="咳咳，点进去怎么是404呢？是github缓存的问题么。。。
@@ -137,7 +142,7 @@ PHP 5.3.3
 <p>重启tomcat，解决~</p>
 <h2 id="部署CAS-server">部署CAS-server</h2><p>官网：<a href="http://developer.jasig.org/cas/" target="_blank" rel="external">http://developer.jasig.org/cas/</a></p>
 <p>下载，上传服务器，解压<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp ./cas-server-<span class="number">4.0</span>.<span class="number">0</span>/modules/cas-server-webapp-<span class="number">4.0</span>.<span class="number">0</span>.war /usr/share/tomcat6/webapps/cas.war</span><br></pre></td></tr></table></figure></p>
-<p>访问：<a href="http://cas.changg-1991.com:8080/cas/login" target="_blank" rel="external">http://cas.changg-1991.com:8080/cas/login</a><br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_without_ssl.jpg.jpg" alt=""><br>此时还没有使用https，所以会有一个警告，接下来给自己颁发证书</p>
+<p>访问：<a href="http://cas.changg-1991.com:8080/cas/login" target="_blank" rel="external">http://cas.changg-1991.com:8080/cas/login</a><br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_without_ssl.jpg" alt=""><br>此时还没有使用https，所以会有一个警告，接下来给自己颁发证书</p>
 <ul>
 <li>生成证书<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ keytool -genkey -alias changg-<span class="number">1991</span>_cas -keyalg RSA -keystore /root/cas.keystore</span><br></pre></td></tr></table></figure>
 </li>
@@ -149,13 +154,13 @@ PHP 5.3.3
 </li>
 <li><p>导入证书<br>这一步似乎不需要，我按照网上的办法导入提示：证书回复与秘钥库中的证书是相同的</p>
 </li>
-<li>编辑tomcat配置文件server.xml<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_server_config.jpg" alt=""><br>重启tomcat，日志中有一个报错<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_log.jpg" alt=""></li>
+<li>编辑tomcat配置文件server.xml<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_server_config.jpg" alt=""><br>重启tomcat，日志中有一个报错<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_https_error.jpg" alt=""><br>查了半天，原来是修改server.xml中SSL的属性protocol为org.apache.coyote.http11.Http11Protocol，参考：<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_server_protocol.jpg" alt=""><br>重启tomcat，之前的报错消失，出现新的问题<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_https_error1.jpg" alt=""><br>原来是权限问题，把keysore拷贝到/home/下面一个专门的文件夹，修改文件夹用户组权限为：tomcat.tomcat，同时修改server.xml中对应的配置，参考：<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/keysore_permission_reference.jpg" alt=""><br>重启tomcat，报错消失，还有几个没有什么卵用的报错暂时忽略，访问：<a href="https://cas.changg-1991.com:8443/cas/login?locale=zh_CN" target="_blank" rel="external">https://cas.changg-1991.com:8443/cas/login?locale=zh_CN</a><br>弹出证书无效的提示，无视之，点击继续<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login.jpg" alt=""><br>默认的账号密码又坑了我一会儿，网上铺天盖地的说只要账号密码一致就可以登录，屁啊，那是哪年的版本了，终于找到一个靠谱的说法，我又去配置文件里找了一下果然账号是casuser，密码是Mellon(不知道Mellon是个什么鬼)，成功登录<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_success.jpg" alt=""><br>至此CAS-server部署完毕</li>
 </ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/" data-id="cih2zs5u00001cl2b5hyq3we8" class="article-share-link">Share</a>
+      <a data-url="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/" data-id="cih30o1dk0001dw2b77yage7a" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CAS/">CAS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP客户端/">PHP客户端</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSO/">SSO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单点登录/">单点登录</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/自定义加密方式/">自定义加密方式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/连接MySQL认证/">连接MySQL认证</a></li></ul>
