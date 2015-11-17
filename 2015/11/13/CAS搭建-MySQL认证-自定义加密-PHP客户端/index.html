@@ -43,7 +43,9 @@ PHP 5.3.3
 <meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_redirect.jpg">
 <meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_client_login_success_redirect.jpg">
 <meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_logout_success.jpg">
-<meta property="og:updated_time" content="2015-11-17T08:44:19.000Z">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_server_deployerConfigContext_config.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_server_deployerConfigContext_config1.jpg">
+<meta property="og:updated_time" content="2015-11-17T09:07:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CAS搭建+MySQL认证+自定义加密+PHP客户端">
 <meta name="twitter:description" content="咳咳，点进去怎么是404呢？是github缓存的问题么。。。
@@ -77,6 +79,10 @@ PHP 5.3.3
       <h1 id="logo-wrap">
         <a href="/" id="logo">苹果·真·好吃</a>
       </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">不是技术博客！不是技术博客！不是技术博客！重说三！</a>
+        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -169,11 +175,16 @@ PHP 5.3.3
 <p>默认的账号密码又坑了我一会儿，网上铺天盖地的说只要账号密码一致就可以登录，屁啊，那是哪年的版本了，终于找到一个靠谱的说法，我又去配置文件里找了一下果然账号是casuser，密码是Mellon(不知道Mellon是个什么鬼)，成功登录<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_success.jpg" alt=""><br>至此CAS-server部署完毕~</p>
 <h2 id="部署CAS-client">部署CAS-client</h2><p>官网：<a href="http://developer.jasig.org/cas-clients/" target="_blank" rel="external">http://developer.jasig.org/cas-clients/</a></p>
 <p>搞了一会儿，想了想不对，我最终是用PHP实现这个客户端，所以去github上搜了一下“cas php”找到：<a href="https://github.com/Jasig/phpCAS" target="_blank" rel="external">https://github.com/Jasig/phpCAS</a><br>工程下载下来并没有文档和demo，囧，用sourcetree clone了一份，有了，测试一下，访问：<a href="http://www.changg-1991.com/phpCAS/docs/examples/example_gateway.php" target="_blank" rel="external">http://www.changg-1991.com/phpCAS/docs/examples/example_gateway.php</a><br>500错误，需要重命名配置文件为config.php<br>编辑config.php，配置$cas_host、$cas_context和$cas_port为刚刚搭建好的CAS-server的相关值，保存退出重新访问，又报500错误，apache的error_log报错<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/apache_cas_client_error.jpg" alt=""><br>原来是缺少php-xml模块，yum装上，重启apache，再次访问<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_php_client_login.jpg" alt=""><br>点击login跳转到<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_redirect.jpg" alt=""><br>输入用户名密码点击登录<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_client_login_success_redirect.jpg" alt=""><br>点击Logout<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_logout_success.jpg" alt=""><br>PHP的CAS-client搭建成功~</p>
+<h2 id="配置CAS链接MySQL进行认证">配置CAS链接MySQL进行认证</h2><p>拷贝cas-server-support-jdbc-4.0.0.jar<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp /root/cas-server-<span class="number">4.0</span>.<span class="number">0</span>/modules/cas-server-support-jdbc-<span class="number">4.0</span>.<span class="number">0</span>.jar /usr/share/tomcat6/webapps/cas-server-webapp-<span class="number">4.0</span>.<span class="number">0</span>/WEB-INF/lib/</span><br></pre></td></tr></table></figure></p>
+<p>下载mysql-connector-java，官网：<a href="http://dev.mysql.com/downloads/connector/j/" target="_blank" rel="external">http://dev.mysql.com/downloads/connector/j/</a><br>上传服务器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp /root/mysql-connector-java-<span class="number">5.1</span>.<span class="number">37</span>-bin.jar /usr/share/tomcat6/webapps/cas-server-webapp-<span class="number">4.0</span>.<span class="number">0</span>/WEB-INF/lib/</span><br></pre></td></tr></table></figure></p>
+<p>编辑cas/WEB-INF/deployerConfigContext.xml，注释掉<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_server_deployerConfigContext_config.jpg" alt=""><br>与注释同等级的地方增加标签：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"mysqlAuthenticationHandler"</span></span><br><span class="line">      <span class="attribute">class</span>=<span class="value">"org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"sql"</span> <span class="attribute">value</span>=<span class="value">"select password from user where username=?"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"dataSource"</span> <span class="attribute">ref</span>=<span class="value">"dataSource"</span> /&gt;</span><span class="tag">&lt;/<span class="title">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"dataSource"</span> <span class="attribute">class</span>=<span class="value">"org.springframework.jdbc.datasource.DriverManagerDataSource"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"driverClassName"</span>&gt;</span><span class="tag">&lt;<span class="title">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="title">value</span>&gt;</span><span class="tag">&lt;/<span class="title">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"url"</span>&gt;</span><span class="tag">&lt;<span class="title">value</span>&gt;</span>jdbc:mysql://localhost:3306/cas_auth<span class="tag">&lt;/<span class="title">value</span>&gt;</span><span class="tag">&lt;/<span class="title">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"username"</span>&gt;</span><span class="tag">&lt;<span class="title">value</span>&gt;</span>lyq_cas<span class="tag">&lt;/<span class="title">value</span>&gt;</span><span class="tag">&lt;/<span class="title">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"password"</span>&gt;</span><span class="tag">&lt;<span class="title">value</span>&gt;</span>0UseQian<span class="tag">&lt;/<span class="title">value</span>&gt;</span><span class="tag">&lt;/<span class="title">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">bean</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>接下来在下面还需要进行一个修改<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_server_deployerConfigContext_config1.jpg" alt=""></p>
+<p>著作权归作者所有，商业转载请联系作者获得授权，非商业转载请注明出处<br>作者：changg-1991<br>链接：<a href="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端">http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/" data-id="cih32c35r0001fk2b51tzfxhj" class="article-share-link">Share</a>
+      <a data-url="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/" data-id="cih35qol20001kj2b4lx0g2cb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CAS/">CAS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP客户端/">PHP客户端</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSO/">SSO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单点登录/">单点登录</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/自定义加密方式/">自定义加密方式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/连接MySQL认证/">连接MySQL认证</a></li></ul>
@@ -254,7 +265,7 @@ PHP 5.3.3
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2015 chang_1991<br>
+      &copy; 2015 chang_1991(QQ:314789171)<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
