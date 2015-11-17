@@ -30,7 +30,10 @@ PHP 5.3.3
 
 安装Java环境Java应该都会装，懒得写了。。。">
 <meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_start_error.jpg">
-<meta property="og:updated_time" content="2015-11-16T07:50:57.000Z">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_without_ssl.jpg.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_server_config.jpg">
+<meta property="og:image" content="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_log.jpg">
+<meta property="og:updated_time" content="2015-11-17T06:41:19.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CAS搭建+MySQL认证+自定义加密+PHP客户端">
 <meta name="twitter:description" content="咳咳，点进去怎么是404呢？是github缓存的问题么。。。
@@ -120,14 +123,39 @@ PHP 5.3.3
 <li>PHP 5.3.3</li>
 </ol>
 <h2 id="安装Java环境">安装Java环境</h2><p>Java应该都会装，懒得写了。。。<br><a id="more"></a></p>
-<h2 id="配置tomcat">配置tomcat</h2><p>安装<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install tomcat6.x86_64</span><br></pre></td></tr></table></figure></p>
+<h2 id="部署tomcat">部署tomcat</h2><p>安装<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install tomcat6.x86_64</span><br></pre></td></tr></table></figure></p>
 <p>启动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ service tomcat6 start</span><br></pre></td></tr></table></figure></p>
-<p>tomcat中有一个报错<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_start_error.jpg" alt=""></p>
+<p>tomcat日志(/var/log/tomcat6/catalina.out)中有一个报错<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_start_error.jpg" alt=""></p>
+<ul>
+<li>安装OpenSSL</li>
+<li>安装APR(Apache Portable Runtime)</li>
+<li>安装tomcat-native<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ tar zxvf tomcat-native.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> ./tomcat-native-<span class="number">1.1</span>.<span class="number">33</span>-src/jni/native</span><br><span class="line">$ ./configure --with-apr=/usr/<span class="built_in">local</span>/apr --with-java-home=/usr/<span class="built_in">local</span>/java</span><br><span class="line">$ make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>加载APR的环境变量，编辑/etc/profile，添加：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/apr/lib</span><br><span class="line">export LD_LIBRARY_PATH</span><br></pre></td></tr></table></figure></p>
+<p>然后执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure></p>
+<p>重启tomcat，解决~</p>
+<h2 id="部署CAS-server">部署CAS-server</h2><p>官网：<a href="http://developer.jasig.org/cas/" target="_blank" rel="external">http://developer.jasig.org/cas/</a></p>
+<p>下载，上传服务器，解压<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp ./cas-server-<span class="number">4.0</span>.<span class="number">0</span>/modules/cas-server-webapp-<span class="number">4.0</span>.<span class="number">0</span>.war /usr/share/tomcat6/webapps/cas.war</span><br></pre></td></tr></table></figure></p>
+<p>访问：<a href="http://cas.changg-1991.com:8080/cas/login" target="_blank" rel="external">http://cas.changg-1991.com:8080/cas/login</a><br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/cas_login_without_ssl.jpg.jpg" alt=""><br>此时还没有使用https，所以会有一个警告，接下来给自己颁发证书</p>
+<ul>
+<li>生成证书<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ keytool -genkey -alias changg-<span class="number">1991</span>_cas -keyalg RSA -keystore /root/cas.keystore</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>把信息按照提示输入</p>
+<ul>
+<li><p>导出证书</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ keytool -export -file /root/changg-<span class="number">1991</span>_cas.crt -alias changg-<span class="number">1991</span>_cas -keystore /root/changg-<span class="number">1991</span>_cas.keystore</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>导入证书<br>这一步似乎不需要，我按照网上的办法导入提示：证书回复与秘钥库中的证书是相同的</p>
+</li>
+<li>编辑tomcat配置文件server.xml<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_server_config.jpg" alt=""><br>重启tomcat，日志中有一个报错<br><img src="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/tomcat_log.jpg" alt=""></li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/" data-id="cih1njp0z0001mr2be9sqwwv9" class="article-share-link">Share</a>
+      <a data-url="http://blog.changg-1991.com/2015/11/13/CAS搭建-MySQL认证-自定义加密-PHP客户端/" data-id="cih2zs5u00001cl2b5hyq3we8" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CAS/">CAS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP客户端/">PHP客户端</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSO/">SSO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单点登录/">单点登录</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/自定义加密方式/">自定义加密方式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/连接MySQL认证/">连接MySQL认证</a></li></ul>
