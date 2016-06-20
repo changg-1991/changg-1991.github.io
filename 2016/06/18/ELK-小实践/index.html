@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ELK 小实践 | 荔枝·芒果·大西瓜</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="搞服务端也有几多时日了，剧本简单概括来说就是时而觉得自己有两下子，时而觉得自己傻B到家。说起自己懂的东西能数一数二，听到不懂得姿势还能强装镇定微笑点头表示赞同，背地里偷偷记到小本上，却再也没有查过。日子一天挤一天过，自己踉踉跄跄的跟着生活流，生怕跑慢了被后面踩掉鞋子，不过也还算衣食无忧，出入自由。今天说这个ELK呢，就是之前一直想搞没时间搞的东西，感觉吊炸天，前段时间终于有点空来做这个，真不错。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ELK 小实践">
+<meta property="og:url" content="http://blog.changg-1991.com/2016/06/18/ELK-小实践/index.html">
+<meta property="og:site_name" content="荔枝·芒果·大西瓜">
+<meta property="og:description" content="搞服务端也有几多时日了，剧本简单概括来说就是时而觉得自己有两下子，时而觉得自己傻B到家。说起自己懂的东西能数一数二，听到不懂得姿势还能强装镇定微笑点头表示赞同，背地里偷偷记到小本上，却再也没有查过。日子一天挤一天过，自己踉踉跄跄的跟着生活流，生怕跑慢了被后面踩掉鞋子，不过也还算衣食无忧，出入自由。今天说这个ELK呢，就是之前一直想搞没时间搞的东西，感觉吊炸天，前段时间终于有点空来做这个，真不错。">
+<meta property="og:image" content="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Elasticsearch运行状态.png">
+<meta property="og:image" content="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Kibana初始化访问.png">
+<meta property="og:image" content="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Kibana-Dashboard.png">
+<meta property="og:updated_time" content="2016-06-20T12:05:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ELK 小实践">
+<meta name="twitter:description" content="搞服务端也有几多时日了，剧本简单概括来说就是时而觉得自己有两下子，时而觉得自己傻B到家。说起自己懂的东西能数一数二，听到不懂得姿势还能强装镇定微笑点头表示赞同，背地里偷偷记到小本上，却再也没有查过。日子一天挤一天过，自己踉踉跄跄的跟着生活流，生怕跑慢了被后面踩掉鞋子，不过也还算衣食无忧，出入自由。今天说这个ELK呢，就是之前一直想搞没时间搞的东西，感觉吊炸天，前段时间终于有点空来做这个，真不错。">
+  
+    <link rel="alternative" href="/atom.xml" title="荔枝·芒果·大西瓜" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">荔枝·芒果·大西瓜</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">幸福生活就是：今天星期六！昨天星期五！明天星期日！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.changg-1991.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ELK-小实践" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/06/18/ELK-小实践/" class="article-date">
+  <time datetime="2016-06-18T09:44:23.000Z" itemprop="datePublished">2016-06-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ELK 小实践
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>搞服务端也有几多时日了，剧本简单概括来说就是时而觉得自己有两下子，时而觉得自己傻B到家。说起自己懂的东西能数一数二，听到不懂得姿势还能强装镇定微笑点头表示赞同，背地里偷偷记到小本上，却再也没有查过。日子一天挤一天过，自己踉踉跄跄的跟着生活流，生怕跑慢了被后面踩掉鞋子，不过也还算衣食无忧，出入自由。<br>今天说这个ELK呢，就是之前一直想搞没时间搞的东西，感觉吊炸天，前段时间终于有点空来做这个，真不错。</p>
+<p>大概说一下ELK是啥，一个大名鼎鼎的开源日志处理软件组合。E指Elasticsearch，负责日志的存储和建立索引；L指Logstash，这个是个神器，负责日志收集；K指Kibana，负责日志可视化检索。下面就来说一下ELK的搭建实现过程。</p>
+<a id="more"></a>
+<h2 id="安装Logstash">安装Logstash</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="comment"># 下载</span></span><br><span class="line">$ wget https://download.elastic.co/logstash/logstash/logstash-<span class="number">2.3</span>.<span class="number">2</span>.tar.gz</span><br><span class="line">$ <span class="comment"># 解压</span></span><br><span class="line">$ tar -zxvf logstash-<span class="number">2.3</span>.<span class="number">2</span>.tar.gz</span><br><span class="line">$ mv logstash-<span class="number">2.3</span>.<span class="number">2</span> /usr/<span class="built_in">local</span>/logstash</span><br><span class="line">$ <span class="comment"># 编辑配置文件，后面说细说</span></span><br><span class="line">$ vim /etc/logstash/official-apache.conf</span><br><span class="line">$ <span class="comment"># 启动Logstash（网上说重启也是这个命令，我试了一下好像不是。。。）</span></span><br><span class="line">$ nohup /usr/<span class="built_in">local</span>/logstash/bin/logstash <span class="operator">-f</span> /etc/logstash/official-apache.conf &amp;</span><br></pre></td></tr></table></figure>
+<h2 id="安装Elasticsearch">安装Elasticsearch</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="comment"># 下载</span></span><br><span class="line">$ wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/<span class="number">2.3</span>.<span class="number">2</span>/elasticsearch-<span class="number">2.3</span>.<span class="number">2</span>.zip</span><br><span class="line">$ <span class="comment"># 解压</span></span><br><span class="line">$ unzip elasticsearch-<span class="number">2.3</span>.<span class="number">2</span>.zip</span><br><span class="line">$ mv elasticsearch-<span class="number">2.3</span>.<span class="number">2</span> /usr/<span class="built_in">local</span>/elasticsearch</span><br><span class="line">$ <span class="comment"># 看文档说不建议用root用户起Elasticsearch服务，有安全问题，所以添加elasticsearch用户</span></span><br><span class="line">$ useradd elasticsearch</span><br><span class="line">$ su elasticsearch</span><br><span class="line">$ <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/elasticsearch</span><br><span class="line">$ <span class="comment"># 启动Elasticsearch需要Java1.8</span></span><br><span class="line">$ ./bin/elasticsearch <span class="operator">-d</span></span><br><span class="line">$ 检查一下运行状态</span><br><span class="line">$ curl <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">9200</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Elasticsearch运行状态.png" alt=""></p>
+<h2 id="Kibana">Kibana</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="comment"># 下载</span></span><br><span class="line">$ wget https://download.elastic.co/kibana/kibana/kibana-<span class="number">4.5</span>.<span class="number">0</span>-linux-x64.tar.gz</span><br><span class="line">$ <span class="comment"># 解压</span></span><br><span class="line">$ tar zxvf kibana-<span class="number">4.5</span>.<span class="number">0</span>-linux-x64.tar.gz</span><br><span class="line">$ mv kibana-<span class="number">4.5</span>.<span class="number">0</span>-linux-x64 /usr/<span class="built_in">local</span>/kibana</span><br><span class="line">$ <span class="comment"># 启动Kibana</span></span><br><span class="line">$ nohup /usr/<span class="built_in">local</span>/kibana/bin/kibana &amp;</span><br></pre></td></tr></table></figure>
+<p>访问：www.changg-1991.com:5601<br><img src="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Kibana初始化访问.png" alt=""><br>最后成果：<br><img src="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Kibana-Dashboard.png" alt=""></p>
+<p>Logstash配置和Kibana Dashboard使用之后再补~</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.changg-1991.com/2016/06/18/ELK-小实践/" data-id="cipnz7qac000rzl2b0ux44jni" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kibana/">Kibana</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Logstash/">Logstash</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/日志/">日志</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/服务端/">服务端</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/06/18/亲爱的朋友们是否已经展翅纷飞/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          亲爱的朋友们是否已经展翅纷飞
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/04/06/简单说说找工作——关于各种职位的日常/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">简单说说找工作——关于各种职位的日常</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CAS/">CAS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kibana/">Kibana</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logstash/">Logstash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP客户端/">PHP客户端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RAID/">RAID</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSO/">SSO</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单点登录/">单点登录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工作/">工作</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/应届生/">应届生</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/日志/">日志</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/服务器/">服务器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/服务端/">服务端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/毕业/">毕业</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/硬件/">硬件</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/硬盘/">硬盘</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/简历/">简历</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/职位/">职位</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义加密方式/">自定义加密方式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/连接MySQL认证/">连接MySQL认证</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/选型/">选型</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CAS/" style="font-size: 10px;">CAS</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Logstash/" style="font-size: 10px;">Logstash</a> <a href="/tags/PHP客户端/" style="font-size: 10px;">PHP客户端</a> <a href="/tags/RAID/" style="font-size: 10px;">RAID</a> <a href="/tags/SSO/" style="font-size: 10px;">SSO</a> <a href="/tags/单点登录/" style="font-size: 10px;">单点登录</a> <a href="/tags/工作/" style="font-size: 20px;">工作</a> <a href="/tags/应届生/" style="font-size: 20px;">应届生</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/服务器/" style="font-size: 10px;">服务器</a> <a href="/tags/服务端/" style="font-size: 10px;">服务端</a> <a href="/tags/毕业/" style="font-size: 20px;">毕业</a> <a href="/tags/硬件/" style="font-size: 10px;">硬件</a> <a href="/tags/硬盘/" style="font-size: 10px;">硬盘</a> <a href="/tags/简历/" style="font-size: 10px;">简历</a> <a href="/tags/职位/" style="font-size: 10px;">职位</a> <a href="/tags/自定义加密方式/" style="font-size: 10px;">自定义加密方式</a> <a href="/tags/连接MySQL认证/" style="font-size: 10px;">连接MySQL认证</a> <a href="/tags/选型/" style="font-size: 10px;">选型</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/06/18/亲爱的朋友们是否已经展翅纷飞/">亲爱的朋友们是否已经展翅纷飞</a>
+          </li>
+        
+          <li>
+            <a href="/2016/06/18/ELK-小实践/">ELK 小实践</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/06/简单说说找工作——关于各种职位的日常/">简单说说找工作——关于各种职位的日常</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/13/简单说说找工作——关于简历/">简单说说找工作——关于简历</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/06/第一次买物理机/">第一次买物理机</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 chang_1991(QQ#314789171)<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
