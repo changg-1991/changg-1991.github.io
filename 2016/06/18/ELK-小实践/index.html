@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Elasticsearch运行状态.png">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Kibana初始化访问.png">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Kibana-Dashboard.png">
-<meta property="og:updated_time" content="2016-06-21T08:31:55.000Z">
+<meta property="og:updated_time" content="2016-06-23T11:29:32.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ELK 小实践">
 <meta name="twitter:description" content="搞服务端也有几多时日了，剧本简单概括来说就是时而觉得自己有两下子，时而觉得自己傻B到家。说起自己懂的东西能数一数二，听到不懂得姿势还能强装镇定微笑点头表示赞同，背地里偷偷记到小本上，却再也没有查过。日子一天挤一天过，自己踉踉跄跄的跟着生活流，生怕跑慢了被后面踩掉鞋子，不过也还算衣食无忧，出入自由。今天说这个ELK呢，就是之前一直想搞没时间搞的东西，感觉吊炸天，前段时间终于有点空来做这个，真不错。">
@@ -321,8 +321,7 @@
 
       
         <p>搞服务端也有几多时日了，剧本简单概括来说就是时而觉得自己有两下子，时而觉得自己傻B到家。说起自己懂的东西能数一数二，听到不懂得姿势还能强装镇定微笑点头表示赞同，背地里偷偷记到小本上，却再也没有查过。日子一天挤一天过，自己踉踉跄跄的跟着生活流，生怕跑慢了被后面踩掉鞋子，不过也还算衣食无忧，出入自由。<br>今天说这个ELK呢，就是之前一直想搞没时间搞的东西，感觉吊炸天，前段时间终于有点空来做这个，真不错。</p>
-<p>大概说一下ELK是啥，一个大名鼎鼎的开源日志处理软件组合。E指Elasticsearch，负责日志的存储和建立索引；L指Logstash，这个是个神器，负责日志收集；K指Kibana，负责日志可视化检索。下面就来说一下ELK的搭建实现过程。</p>
-<a id="more"></a>
+<p>大概说一下ELK是啥，一个大名鼎鼎的开源日志处理软件组合。E指Elasticsearch，负责日志的存储和建立索引；L指Logstash，这个是个神器，负责日志收集；K指Kibana，负责日志可视化检索。下面就来说一下ELK的搭建实现过程。<br><a id="more"></a></p>
 <h2 id="安装Logstash">安装Logstash</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="comment"># 下载</span></span><br><span class="line">$ wget https://download.elastic.co/logstash/logstash/logstash-<span class="number">2.3</span>.<span class="number">2</span>.tar.gz</span><br><span class="line">$ <span class="comment"># 解压</span></span><br><span class="line">$ tar -zxvf logstash-<span class="number">2.3</span>.<span class="number">2</span>.tar.gz</span><br><span class="line">$ mv logstash-<span class="number">2.3</span>.<span class="number">2</span> /usr/<span class="built_in">local</span>/logstash</span><br><span class="line">$ <span class="comment"># 编辑配置文件，后面说细说</span></span><br><span class="line">$ vim /etc/logstash/official-apache.conf</span><br><span class="line">$ <span class="comment"># 启动Logstash（网上说重启也是这个命令，我试了一下好像不是。。。）</span></span><br><span class="line">$ nohup /usr/<span class="built_in">local</span>/logstash/bin/logstash <span class="operator">-f</span> /etc/logstash/official-apache.conf &amp;</span><br></pre></td></tr></table></figure>
 <h2 id="安装Elasticsearch">安装Elasticsearch</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="comment"># 下载</span></span><br><span class="line">$ wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/<span class="number">2.3</span>.<span class="number">2</span>/elasticsearch-<span class="number">2.3</span>.<span class="number">2</span>.zip</span><br><span class="line">$ <span class="comment"># 解压</span></span><br><span class="line">$ unzip elasticsearch-<span class="number">2.3</span>.<span class="number">2</span>.zip</span><br><span class="line">$ mv elasticsearch-<span class="number">2.3</span>.<span class="number">2</span> /usr/<span class="built_in">local</span>/elasticsearch</span><br><span class="line">$ <span class="comment"># 看文档说不建议用root用户起Elasticsearch服务，有安全问题，所以添加elasticsearch用户</span></span><br><span class="line">$ useradd elasticsearch</span><br><span class="line">$ su elasticsearch</span><br><span class="line">$ <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/elasticsearch</span><br><span class="line">$ <span class="comment"># 启动Elasticsearch需要Java1.8</span></span><br><span class="line">$ ./bin/elasticsearch <span class="operator">-d</span></span><br><span class="line">$ 检查一下运行状态</span><br><span class="line">$ curl <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">9200</span></span><br></pre></td></tr></table></figure>
 <p><img src="http://blog.changg-1991.com/2016/06/18/ELK-小实践/Elasticsearch运行状态.png" alt=""></p>
@@ -449,7 +448,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-count">7</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -466,7 +465,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
