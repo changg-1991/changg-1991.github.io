@@ -93,7 +93,7 @@
 <meta property="og:description" content="今天搞MySQL5.7，被坑了俩小时，心里好不爽╭(╯^╰)╮
 故事背景新搞的项目，部署线上环境，阿里云ECS主机，换了阿里的yum源，默认安装的MySQL版本是5.1之前开发环境的MySQL版本是5.7">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/06/23/MySQL5-7去你大爷的/授权字段.png">
-<meta property="og:updated_time" content="2016-06-23T12:12:42.000Z">
+<meta property="og:updated_time" content="2016-06-23T12:16:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL5.7去你大爷的">
 <meta name="twitter:description" content="今天搞MySQL5.7，被坑了俩小时，心里好不爽╭(╯^╰)╮
@@ -332,13 +332,17 @@
 </li>
 <li><p>这个也难不倒我，无非是删几个ib_logfile文件，删了再重启，还是报错，宝宝心想，卸载重装一次吧。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum remove mysql-devel.x86_64 mysql-server.x86_64</span><br></pre></td></tr></table></figure>
+<p>再重新安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ yum install mysql-community-devel.x86_64</span><br><span class="line">$ yum install mysql-community-server.x86_64</span><br></pre></td></tr></table></figure>
+<p>启动mysql，日志还是报错，宝宝有点儿方了。。。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2016-06-23T04:17:34.318298Z 0 [Warning] Failed to open optimizer cost constant tables</span><br><span class="line">2016-06-23T04:17:34.318893Z 0 [ERROR] Fatal error: mysql.user table is damaged. Please run mysql_upgrade.</span><br></pre></td></tr></table></figure>
 </li>
+<li><p>但是咱作为一枚资深的服务端（大误）基本技能还是有的，我冷静的去rm -rf了/var/lib64/mysql/<br>接着yum list installed | grep ^mysql，列出来的都remove掉，又重装了一遍，启动成功！啧，咱还是有两下子的~</p>
+</li>
+<li>顺其自然的mysql -u root -p，两次回车，丫竟然告诉我Access denied！你丫不看看我是谁！我是你大爷！(╯‵□′)╯︵┻━┻<br>难不成这个还有初始密码，我试了试了几个常用的弱密码都没进去，又试了试<br>mysqladmin -uroot password xxxxxx 还是不行</li>
 </ol>
-<p>再重新安装<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ yum install mysql-community-devel.x86_64</span><br><span class="line">$ yum install mysql-community-server.x86_64</span><br></pre></td></tr></table></figure></p>
-<p>启动mysql，日志还是报错，宝宝有点儿方了。。。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2016-06-23T04:17:34.318298Z 0 [Warning] Failed to open optimizer cost constant tables</span><br><span class="line">2016-06-23T04:17:34.318893Z 0 [ERROR] Fatal error: mysql.user table is damaged. Please run mysql_upgrade.</span><br></pre></td></tr></table></figure></p>
-<p>3.但是咱作为一枚资深的服务端（大误）基本技能还是有的，我冷静的去rm -rf了/var/lib64/mysql/<br>接着yum list installed | grep ^mysql，列出来的都remove掉，又重装了一遍，启动成功！啧，咱还是有两下子的~<br>4.顺其自然的mysql -u root -p，两次回车，丫竟然告诉我Access denied！你丫不看看我是谁！我是你大爷！(╯‵□′)╯︵┻━┻<br>难不成这个还有初始密码，我试了试了几个常用的弱密码都没进去，又试了试<br>mysqladmin -uroot password xxxxxx 还是不行</p>
 <h2 id="故事高潮">故事高潮</h2><p>不管了，my.cnf中加一句skip-grant-tables，重启进去，到mysql.user表，看到丫的5.1、5.7的userDetail表结构都不一样了，等等，那个授权字段里写了什么？！<br><img src="http://blog.changg-1991.com/2016/06/23/MySQL5-7去你大爷的/授权字段.png" alt=""><br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">THIS IS NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">IS NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">PASSWORD THAT CAN BE USED HERE</span><br><span class="line">THAT CAN BE USED HERE</span><br><span class="line">CAN BE USED HERE</span><br><span class="line">BE USED HERE</span><br><span class="line">USED HERE</span><br><span class="line">HERE</span><br></pre></td></tr></table></figure></p>
-<p>凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )<br>5.改了密码，去建库建表，竟然提示：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">You must <span class="operator"><span class="keyword">reset</span> your <span class="keyword">password</span> <span class="keyword">using</span> <span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="keyword">statement</span> <span class="keyword">before</span> executing this <span class="keyword">statement</span>.</span></span><br></pre></td></tr></table></figure></p>
+<p>凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )<br>改了密码，去建库建表，竟然提示：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">You must <span class="operator"><span class="keyword">reset</span> your <span class="keyword">password</span> <span class="keyword">using</span> <span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="keyword">statement</span> <span class="keyword">before</span> executing this <span class="keyword">statement</span>.</span></span><br></pre></td></tr></table></figure></p>
 <p>在网上搜了一下，三步解决：<br>step 1: SET PASSWORD = PASSWORD(‘your new password‘); # 密码还有强度要求，也是醉了。。。<br>step 2: ALTER USER ‘root‘@‘localhost‘ PASSWORD EXPIRE NEVER;<br>step 3: flush privileges;<br>退出重新登陆，搞定！</p>
 
       
