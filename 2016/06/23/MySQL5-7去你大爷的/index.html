@@ -327,11 +327,11 @@
 <p>所以上线正式环境，要么改表结构然后改代码，要么升级数据库，一言不合老子就升库！</p>
 <h2 id="故事经过">故事经过</h2><p>简单查了一下，用MySQL官方的yum源升级最靠谱，说干就干！<br>我去MySQL官网查到了一份教程，<a href="http://dev.mysql.com/doc/mysql-yum-repo-quick-guide/en/" target="_blank" rel="external">A Quick Guide to Using the MySQL Yum Repository</a><br>本来就是空数据库，觉得可以easy搞定，结果证明我还是天真！</p>
 <ol>
-<li>先安装MySQL Yum Repository的rpm包<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -Uvh mysql57-community-release-el6-<span class="number">8</span>.noarch.rpm</span><br></pre></td></tr></table></figure>
+<li><p>先安装MySQL Yum Repository的rpm包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -Uvh mysql57-community-release-el6-<span class="number">8</span>.noarch.rpm</span><br></pre></td></tr></table></figure>
+<p>确认安装成功之后，yum update了一下，一切顺利，重启MySQL，Failed，日志报错：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2016-06-23T04:12:47.220773Z 0 [ERROR] InnoDB: Plugin initialization aborted with error Generic error</span><br><span class="line">2016-06-23T04:12:47.821398Z 0 [ERROR] Plugin 'InnoDB' init function returned error.</span><br><span class="line">2016-06-23T04:12:47.821453Z 0 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.</span><br><span class="line">2016-06-23T04:12:47.821462Z 0 [ERROR] Failed to initialize plugins.</span><br></pre></td></tr></table></figure>
 </li>
-</ol>
-<p>确认安装成功之后，yum update了一下，一切顺利，重启MySQL，Failed，日志报错：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2016-06-23T04:12:47.220773Z 0 [ERROR] InnoDB: Plugin initialization aborted with error Generic error</span><br><span class="line">2016-06-23T04:12:47.821398Z 0 [ERROR] Plugin 'InnoDB' init function returned error.</span><br><span class="line">2016-06-23T04:12:47.821453Z 0 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.</span><br><span class="line">2016-06-23T04:12:47.821462Z 0 [ERROR] Failed to initialize plugins.</span><br></pre></td></tr></table></figure></p>
-<ol>
 <li><p>这个也难不倒我，无非是删几个ib_logfile文件，删了再重启，还是报错，宝宝心想，卸载重装一次吧。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum remove mysql-devel.x86_64 mysql-server.x86_64</span><br></pre></td></tr></table></figure>
 <p>再重新安装</p>
@@ -343,30 +343,30 @@
 </li>
 <li>顺其自然的mysql -u root -p，两次回车，丫竟然告诉我Access denied！你丫不看看我是谁！我是你大爷！(╯‵□′)╯︵┻━┻<br>难不成这个还有初始密码，我试了试了几个常用的弱密码都没进去，又试了试<br>mysqladmin -uroot password xxxxxx 还是不行</li>
 </ol>
-<h2 id="故事高潮">故事高潮</h2><p>不管了，my.cnf中加一句skip-grant-tables，重启进去，到mysql.user表，看到丫的5.1、5.7的userDetail表结构都不一样了，等等，那个授权字段里写了什么？！<br><img src="http://blog.changg-1991.com/2016/06/23/MySQL5-7去你大爷的/授权字段.png" alt=""><br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">THIS IS NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">IS NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">PASSWORD THAT CAN BE USED HERE</span><br><span class="line">THAT CAN BE USED HERE</span><br><span class="line">CAN BE USED HERE</span><br><span class="line">BE USED HERE</span><br><span class="line">USED HERE</span><br><span class="line">HERE</span><br></pre></td></tr></table></figure></p>
+<h2 id="故事高潮">故事高潮</h2><p>不管了，my.cnf中加一句skip-grant-tables，重启进去，到mysql.user表，看到丫的5.1、5.7的user表结构都不一样了，等等，那个授权字段里写了什么？！<br><img src="http://blog.changg-1991.com/2016/06/23/MySQL5-7去你大爷的/授权字段.png" alt=""><br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">THIS IS NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">IS NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">NOT AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">AVAILID PASSWORD THAT CAN BE USED HERE</span><br><span class="line">PASSWORD THAT CAN BE USED HERE</span><br><span class="line">THAT CAN BE USED HERE</span><br><span class="line">CAN BE USED HERE</span><br><span class="line">BE USED HERE</span><br><span class="line">USED HERE</span><br><span class="line">HERE</span><br></pre></td></tr></table></figure></p>
 <p>凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )凸(艹皿艹 )<br>宝宝强压暴脾气，改了密码，去建库建表，竟然又提示：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">You must <span class="operator"><span class="keyword">reset</span> your <span class="keyword">password</span> <span class="keyword">using</span> <span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="keyword">statement</span> <span class="keyword">before</span> executing this <span class="keyword">statement</span>.</span></span><br></pre></td></tr></table></figure></p>
 <p>在网上搜了一下，三步解决：<br>step 1: SET PASSWORD = PASSWORD(‘your new password’); # 密码还有强度要求，也是醉了。。。<br>step 2: ALTER USER ‘root’@’localhost’ PASSWORD EXPIRE NEVER;<br>step 3: flush privileges;<br>退出重新登陆，搞定！</p>
 <h2 id="补充反思(2016-07-05)">补充反思(2016-07-05)</h2><p>今天又搞了一次线上库的升级，也是从MySQL5.1升到5.7，停服务升级，整个过程比上一次顺利的多，之前是我错怪了MySQL，是我旧版本MySQL文件没删干净，这里再简单记录一下升级过程</p>
 <ol>
-<li>先备份现有业务库<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -u xxx -h xxx -P <span class="number">3306</span> -p business_database &gt; business_database.sql</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
+<li><p>先备份现有业务库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mysqldump -u xxx -h xxx -P <span class="number">3306</span> -p business_database &gt; business_database.sql</span><br></pre></td></tr></table></figure>
 <p>这里有一个细节需要注意，如果数据库本身授权不复杂，那就不用导出mysql库；授权复杂呢，需要导出mysql库，但是MySQL5.1和5.7 mysql.user表数据结结构不一样，直接导入也是不行的，例如5.1中的Password字段在5.7中名字叫authentication_string，就还有额外的工作量。<br>另外，如果之前有修改过my.cnf，比如优化配置，加了slow_query，开了binlog配了主从啥的，也建议备份一下。虽然到5.7有些配置项名字也有改，但总比从头配强。。。</p>
-<ol>
+</li>
 <li><p>停止MySQL服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ service mysqld stop</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>卸载旧版MySQL，并清除全部残留文件<br>我是yum装的，所以也是yum卸</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum remove mysql*</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>查找残留文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find / -name mysql</span><br></pre></td></tr></table></figure></p>
+<p>查找残留文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find / -name mysql</span><br></pre></td></tr></table></figure>
 <p>发现的文件一律rm -rf 掉</p>
-<ol>
-<li>安装MySQL新版本<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -Uvh mysql57-community-release-el6-<span class="number">8</span>.noarch.rpm</span><br><span class="line">$ yum install mysql-community-devel.x86_64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装MySQL新版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -Uvh mysql57-community-release-el6-<span class="number">8</span>.noarch.rpm</span><br><span class="line">$ yum install mysql-community-devel.x86_64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动MySQL<br>这后面就不细讲了，按照前面的步骤做，后面应该不会遇到什么问题<br>后来我查到，之前困扰我的初始密码问题是因为MySQL 5.7以后，系统会自动生成随机的密码，哈哈。。。</p>
 </li>
 </ol>
-<p>5.启动MySQL<br>这后面就不细讲了，按照前面的步骤做，后面应该不会遇到什么问题<br>后来我查到，之前困扰我的初始密码问题是因为MySQL 5.7以后，系统会自动生成随机的密码，哈哈。。。</p>
 
       
     </div>
