@@ -84,23 +84,23 @@
 
 
 
-<meta name="description" content="上周四的时候，发现线上小米推送又挤压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。
+<meta name="description" content="上周四的时候，发现线上小米推送又积压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。
 之前的设计是这样的，因为线上服务端向小米服务端请求推送走的是网络，偶发性出现推送延迟会使很多请求不能及时释放，造成机器负载增高。为了解决这个问题，我变同步推为异步推，所有的推送请求都塞到一个Redis的队列里，另一端有一个常驻进程从队列里取推送任务，然后像小米发推送请求，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PHP多进程小实践">
 <meta property="og:url" content="http://blog.changg-1991.com/2016/08/09/PHP多进程小实践/index.html">
 <meta property="og:site_name" content="荔枝·芒果·大西瓜">
-<meta property="og:description" content="上周四的时候，发现线上小米推送又挤压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。
+<meta property="og:description" content="上周四的时候，发现线上小米推送又积压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。
 之前的设计是这样的，因为线上服务端向小米服务端请求推送走的是网络，偶发性出现推送延迟会使很多请求不能及时释放，造成机器负载增高。为了解决这个问题，我变同步推为异步推，所有的推送请求都塞到一个Redis的队列里，另一端有一个常驻进程从队列里取推送任务，然后像小米发推送请求，">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/08/09/PHP多进程小实践/Linux信号.png">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/08/09/PHP多进程小实践/pcntl_wait信号中断.png">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/08/09/PHP多进程小实践/pcntl_signal.png">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/08/09/PHP多进程小实践/子进程报错.png">
 <meta property="og:image" content="http://blog.changg-1991.com/2016/08/09/PHP多进程小实践/大功告成.gif">
-<meta property="og:updated_time" content="2016-08-12T07:10:29.000Z">
+<meta property="og:updated_time" content="2016-08-24T01:40:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PHP多进程小实践">
-<meta name="twitter:description" content="上周四的时候，发现线上小米推送又挤压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。
+<meta name="twitter:description" content="上周四的时候，发现线上小米推送又积压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。
 之前的设计是这样的，因为线上服务端向小米服务端请求推送走的是网络，偶发性出现推送延迟会使很多请求不能及时释放，造成机器负载增高。为了解决这个问题，我变同步推为异步推，所有的推送请求都塞到一个Redis的队列里，另一端有一个常驻进程从队列里取推送任务，然后像小米发推送请求，">
 
 
@@ -325,7 +325,7 @@
       
 
       
-        <p>上周四的时候，发现线上小米推送又挤压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。</p>
+        <p>上周四的时候，发现线上小米推送又积压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。</p>
 <p>之前的设计是这样的，因为线上服务端向小米服务端请求推送走的是网络，偶发性出现推送延迟会使很多请求不能及时释放，造成机器负载增高。为了解决这个问题，我变同步推为异步推，所有的推送请求都塞到一个Redis的队列里，另一端有一个常驻进程从队列里取推送任务，然后像小米发推送请求，这算是推送模块的第二版。后来随着用户量变大，和业务逻辑变复杂，推送请求也成倍增加，单进程也有些吃不消，就暴力的把单进程改成多进程，10进程从队列里取推送任务，一度效果很好，这应该是推送模块第三版。<br><a id="more"></a><br>可是后面偶然会听到用户抱怨收不到推送，一查发现是推送任务积压，每次都手动清空队列，然后重启推动脚本。我记得今年有一次闰秒，那天Redis的队列快把内存吃光了。这种问题一次两次还好，次数多了每次手动处理难免蛋疼，而且和第三方的对接很多问题也无法追查。随着时间的考验推送模块的问题逐渐暴露出来：</p>
 <ul>
 <li>没有良好的监控体系，每次都是通过自己试用或用户吐槽发现问题，发现问题不够及时</li>
@@ -419,6 +419,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2017/03/14/Screeps-是一款什么样子的游戏？/" rel="prev" title="Screeps 是一款什么样子的游戏？">
+                Screeps 是一款什么样子的游戏？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -489,7 +493,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -576,7 +580,7 @@
         <div class="copyright" >
   
   &copy;  2015 - 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

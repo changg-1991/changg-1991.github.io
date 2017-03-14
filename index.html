@@ -253,6 +253,112 @@
             
               
                 
+                <a class="post-title-link" href="/2017/03/14/Screeps-是一款什么样子的游戏？/" itemprop="url">
+                  Screeps 是一款什么样子的游戏？
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-03-14T17:03:12+08:00" content="2017-03-14">
+              2017-03-14
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/14/Screeps-是一款什么样子的游戏？/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/14/Screeps-是一款什么样子的游戏？/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>原文地址：<a href="http://support.screeps.com/hc/en-us/articles/203021782-What-kind-of-game-is-Screeps-" target="_blank" rel="external">http://support.screeps.com/hc/en-us/articles/203021782-What-kind-of-game-is-Screeps-</a></p>
+<p>Screeps 是一款大型多人在线即时战略游戏。全部玩家共享一个唯一持久的世界，你可以在其中建造属于自己的殖民地。在自己的殖民地中你可以采集资源，建造各种单位，征服其他玩家的领地。随着你征服越多的领地，你在整个世界中的影响就会越来越大，同时你扩张的能力也会越来越强。然而，这需要你做出很大的努力，毕竟可能很多玩家会垂涎同一块领地。</p>
+<p>Screeps 是为了大家编程技巧而开发的。和某些即时战略游戏不同，在Screeps 中你的单位可以不在你的参与下对事件做出反应，这得益于你对他们精巧的编程。并且，和其他大型多人在线游戏不同，你不需要为了玩好Screeps 而玩命肝。你时不时上来看一眼是不是一切正常就足够了。</p>
+<p>———————————————————我是分割线，下面是原文———————————————————</p>
+<p>Screeps is a massive multiplayer online real-time strategy game. Each player can create his or her own colony in a single persistent world shared by all the players. Such a colony can mine resources, build units, conquer territory. As you conquer more territory, your influence in the game world grows, as well as your abilities to expand your footprint. However, it requires a lot of effort on your part, since multiple players may aim at the same territory.</p>
+<p>Screeps is developed for people with programming skills. Unlike some other RTS games, your units in Screeps can react to events without your participation – provided that you have programmed them properly. And, unlike other MMO, you do not have to play Screeps constantly to play well. It is quite enough just to check once in a while to see if everything goes well.</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/09/PHP多进程小实践/" itemprop="url">
                   PHP多进程小实践
                 </a>
@@ -322,7 +428,7 @@
 
       
         
-          <p>上周四的时候，发现线上小米推送又挤压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。</p>
+          <p>上周四的时候，发现线上小米推送又积压了一百多万条推送，我忍它很久了，决定动手干掉这个问题。中间遇到了两个坑，这里简单记录一下。</p>
 <p>之前的设计是这样的，因为线上服务端向小米服务端请求推送走的是网络，偶发性出现推送延迟会使很多请求不能及时释放，造成机器负载增高。为了解决这个问题，我变同步推为异步推，所有的推送请求都塞到一个Redis的队列里，另一端有一个常驻进程从队列里取推送任务，然后像小米发推送请求，这算是推送模块的第二版。后来随着用户量变大，和业务逻辑变复杂，推送请求也成倍增加，单进程也有些吃不消，就暴力的把单进程改成多进程，10进程从队列里取推送任务，一度效果很好，这应该是推送模块第三版。<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/08/09/PHP多进程小实践/#more" rel="contents">
@@ -1372,7 +1478,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1448,7 +1554,7 @@
         <div class="copyright" >
   
   &copy;  2015 - 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
